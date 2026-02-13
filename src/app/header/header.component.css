@@ -1,0 +1,38 @@
+a {
+  color: blue;
+  background-color: beige;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+
+button {
+  justify-content: center;
+  border: 1pt;
+  color: black;
+  width: 200pt;
+  color:   rgb(4, 4, 109);
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px;
+  align-items: center;
+}
+
+
+button:hover {
+  cursor: pointer;
+  color: rgb(133, 58, 4);
+  background-color: beige;
+}
+
+table {
+  background-color: rgb(4, 4, 109);
+  color: yellow;
+  width: 100%;
+}
+.tp-button-row {
+  display: table-cell;
+  max-width: 600px;
+}

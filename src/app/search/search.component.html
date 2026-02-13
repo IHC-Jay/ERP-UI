@@ -1,0 +1,113 @@
+<h2>ERP Trading Partner, TPID, Links for a TPID</h2>
+<br>
+<p>Type a TPID </p>
+
+
+<form [formGroup]="form" class="form-group">
+  <div class="form-group">
+
+    <div>
+      <input hidden="true" class="form-control">
+    </div>
+
+    <table>
+      <tr>
+        <td>
+
+          <input #searchTpId type="text" formControlName="searchTpId" class="form-control" />
+        </td>
+        <td>
+          <button [disabled]="loading" class="btn btn-primary" (click)="onTpIdChange()">
+            Search TPID
+          </button>
+        </td>
+      </tr>
+
+
+    </table>
+
+  </div>
+  @if(canRenderDetails) {
+  <div>
+
+    <h3 matLine> TP information </h3>
+
+
+    <table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort *ngIf="dataSource.data.length > 0"
+      style="font-size: small;">
+
+      <ng-container [matColumnDef]="column" *ngFor="let column of dataTableKey; let i = index">
+        <th style="font-size: smaller;" class="mat-header-cell" *matHeaderCellDef mat-sort-header> {{dataTableLabel[i]}}
+        </th>
+
+        <td mat-cell *matCellDef="let element">
+          <div *ngIf="column!=='Links'"> {{element[column]}} </div>
+          <div *ngIf="column==='Links'">
+
+            <button class="btn-act" (click)="SelecttpLinks(element.TPID)">
+              <mat-icon style="border-width: 5px;">list</mat-icon>
+              Details
+            </button>
+
+
+          </div>
+        </td>
+
+
+      </ng-container>
+
+
+
+      <!-- Template for tpIds row -->
+      <ng-container matColumnDef="expandedTpLink" >
+        <td mat-cell *matCellDef="let element" [attr.colspan]="dataTableLabel.length">
+
+          <div class="row tpLinks-element-tpId" *ngIf="element.isExpanded">
+
+
+                <i style="color: blue;"> Links: </i>
+                <table>
+                  <tbody>
+                    <tr *ngFor="let lnk of tpLinksData">
+                      <td>{{ lnk.Link }}, </td>
+                      <td>{{ lnk.TransactionType }}, </td>
+                      <td>{{ lnk.Version }}, </td>
+                       <td>Isa Sender: {{ lnk.IsaSenderId }}, </td>
+                        <td>Isa Receiver: {{ lnk.IsaReceiverId }}, </td>
+                         <td>Gs Sender: {{ lnk.GsSenderId }}, </td>
+                         <td>Gs Receiver: {{ lnk.GsReceiverId }}</td>
+                    </tr>
+                  </tbody>
+                </table>
+
+
+          </div>
+        </td>
+      </ng-container>
+
+
+      <tr mat-header-row *matHeaderRowDef="dataTableLabel;sticky: true"></tr>
+      <tr mat-row *matRowDef="let element; columns: dataTableLabel;" class="tpLinks-element-row"
+        [class.tpLinks-expanded-row]="element.isExpanded"></tr>
+
+      <!-- Extra row to show tpId content column -->
+      <tr mat-row *matRowDef="let row; columns: ['expandedTpLink']" class="tpLinks-detail-row"></tr>
+
+
+    </table>
+
+<mat-paginator style="font-size: 10px; background-color: azure;"
+[pageSize]="pageSize"
+[pageSizeOptions]="[10, 25, 50]"
+showFirstLastButtons
+(page)="handlePageEvent($event)"
+  aria-label="Select page"
+  [selectConfig]="{panelClass: 'custom-dropdown-color'}"
+>
+</mat-paginator>
+
+  </div>
+}
+
+
+</form>

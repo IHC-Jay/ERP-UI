@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+.custom-dropdown-color {
+  /* Background color for the open dropdown panel */
+  --mat-select-panel-background-color: azure ; /* Example: Red background */
+
+  /* Text color for the options in the dropdown */
+  --mat-option-text-color: black; /* Example: White text */
+
+  /* Background color for the selected option (20 in your case) */
+  --mat-option-selected-state-layer-color: Beige !important; /* Example: Green background for selected item */
+
+  /* Text color for the selected item in the closed dropdown */
+  --mat-select-enabled-trigger-text-color: Red; /* Example: Red text in closed state */
+}
+
+:root {
+  --mat-datepicker-calendar-container-background-color: Beige; /* Example color */
+  /* Add more variables here if needed for other parts of the datepicker */
+}

@@ -1,0 +1,256 @@
+
+<form [formGroup]="form"  class="form-group" >
+
+  <div style="width: 100%; height: 800px; background: white;">
+    <as-split direction="vertical">
+      <as-split-area [size]="30" minSize="10" maxSize="50">
+
+      <table align="left" style="font-size: 10px; border: 1px solid black;">
+        <tr style="font-size: 10px; ">
+
+          <td class="form-group col-1" style="font-size: 10px; " >
+
+              <mat-label style="font-size: 10px; font-weight: bold; text-align: right;">Trading Partner: </mat-label>
+
+                    <mat-select formControlName="TradingPartner"
+                    (selectionChange)="tpChange()"
+                    [multiple]="false" >
+                      <mat-option *ngFor="let tpName of tpDataSource" [value]="tpName"
+                      style="font-size: 10px; background-color: white;">
+                        {{tpName}}
+                      </mat-option>
+                    </mat-select>
+          </td>
+
+          <td class="form-group col-1" style="font-size: 10px; ">
+
+              <mat-label style="font-size: 10px; ">Transaction Type</mat-label>
+              <mat-select formControlName="transType" (selectionChange)="transactionChange($event.value)"
+              [multiple]="false" >
+                <mat-option *ngFor="let transType of transactionTypes" [value]="transType"
+                style="font-size: 10px; background-color: white;">
+                  {{transType}}
+                </mat-option>
+              </mat-select>
+
+          </td>
+
+
+
+           <td class="form-group col-1" style="font-size: 10px; ">
+
+                <mat-label style="font-size: 10px; ">Count</mat-label>
+                <mat-select formControlName="rowCnt"
+                [multiple]="false" >
+                  <mat-option *ngFor="let rowCnt of maxCount" [value]="rowCnt"
+                  style="font-size: 10px;  background-color: white;">
+                    {{rowCnt}}
+                  </mat-option>
+                </mat-select>
+
+
+          </td>
+          <td class="form-group col-2" style="font-size: 10px; ">
+
+
+              <mat-form-field>
+                <mat-label style="font-size: 10px; ">Enter a date range</mat-label>
+                <mat-date-range-input [rangePicker]="picker" >
+                  <input matStartDate formControlName="matStartDate" placeholder="Start date" >
+                  <input matEndDate formControlName="matEndDate" placeholder="End date">
+                </mat-date-range-input>
+                <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+                <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                <mat-date-range-picker #picker [startAt]="startDate"></mat-date-range-picker>
+              </mat-form-field>
+
+          </td>
+          <td class="form-group col-2" style="font-size: 10px; ">
+
+                <mat-radio-group aria-label="Select an option" formControlName="isaOrSt">
+                  <mat-radio-button value="ST" [checked]='true'>Transactions</mat-radio-button>
+                  <mat-radio-button value="ISA" >Files</mat-radio-button>
+                </mat-radio-group>
+
+
+          </td>
+          <td  style="font-size: 10px; text-align: center;">
+
+            <button  class="btn btn-primary" style="background-color: navy;" (click)="onSearchTransactions()">
+              Search
+            </button>
+          </td>
+
+
+        </tr>
+<BR>
+    <tr>
+
+        <td class="form-group col-2" style="font-size: small; text-align: right;">
+          <label style="font-family: Calibri, Calibri, serif; font-weight: bold;">Additional Search Conditions: </label>
+        </td>
+          <td class="form-group col-2" style="font-size: small; ">
+          <mat-select formControlName="searchField"   style="font-size:small; font-family: Calibri, Calibri, serif;" >
+
+            <mat-option *ngFor="let fld of searchColumns" [value]="fld.label"
+            style="font-size: 10px; background-color: white;">
+              {{fld.label}}
+            </mat-option>
+
+      </mat-select>
+      </td>
+      <td class="form-group col-1"  style="font-size: small; ">
+      <mat-select formControlName="searchCndition"
+      style="font-size:small; font-family: Calibri, Calibri, serif;">
+
+            <mat-option *ngFor="let con of conditionColumns" [value]="con"
+            style="font-size: 10px; background-color: white;">
+              {{con}}
+            </mat-option>
+
+      </mat-select>
+      </td>
+
+      <td  class="form-group col-2" style="font-size: small;  ">
+          <input type="text" formControlName="searchValue"
+          style="font-size:small; font-family: Calibri, Calibri, serif; margin-right: 10px; width: 100%;"
+          [(ngModel)]="searchValue" />
+       </td>
+
+       <td>
+        <button class="icon" style="background-color: grey; font-family: Calibri, Calibri, serif; margin-right: 15px;"
+          [disabled]="loading" class="btn btn-primary" (click)="addSearch()">
+            <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+            Add
+          </button>
+
+        <button  *ngIf="searchTransaction" class="btn btn-primary" style="background-color: grey; font-family: Calibri, Calibri, serif;"  (click)="clearSearch()">
+          Clear
+        </button>
+      </td>
+    </tr>
+
+
+
+    <!-- Search -->
+
+    <tr>
+      @if(searchTransaction)
+      {
+
+      <td  class="form-group col-2" style="font-size: small; text-align: right; ">
+       <label  style="font-size: medium; font-family: Calibri, Calibri, serif; font-weight: bold;" >
+    <b>Search Creteria: </b> </label>
+  </td>
+
+    <td colspan="5" style="font-size: small; text-align: left; ">
+  <label  style="font-size: small; font-family: Calibri, Calibri, serif;" >{{searchString}}</label>
+  </td>
+}
+
+ </tr>
+
+
+  <tr>
+        <!-- Columns to be displayed  & save -->
+
+            <td class="form-group col-2" style="font-size: small; text-align: right; ">
+
+              <label style="font-family: Calibri, Calibri, serif; text-align: right;font-size: small; font-weight: bold;">
+                {{displayLabel}} </label>
+              </td>
+
+              <td colspan="5" style="font-size: small; ">
+                <div class="selDiv" style="width: 100%;">
+
+                  <ng-multiselect-dropdown class="container"
+                  [placeholder]="'Select Columns to display'"
+                  [settings]="dropdownSettings"
+                  [data]="allDropdownList"
+                  [(ngModel)]="selDropdownList"
+                  (onSelect)="onItemSelect($event)"
+                  (onDeSelect)="onItemDeSelect($event)"
+                  [ngModelOptions]="{standalone: true}"
+                  >
+                </ng-multiselect-dropdown>
+
+              </div>
+              </td>
+              <td></td>
+
+
+
+   </tr>
+
+   </table>
+
+  </as-split-area>
+  <as-split-area [size]="70">
+
+        <div>
+
+
+            <!-- Transactions -->
+             @if(canRenderDetails)
+             {
+            <div style="width:100%;overflow-x:scroll; height: 100%; font-size: small;">
+            <table mat-table [dataSource]="dataSource" multiTemplateDataRows matSort *ngIf="dataSource.data.length > 0" style="font-size: small;">
+
+                <ng-container [matColumnDef]="column" *ngFor="let column of dataTableKey; let i = index">
+                  <th style="font-size: smaller;" class="mat-header-cell" *matHeaderCellDef mat-sort-header> {{dataTableLabel[i]}} </th>
+                  <td mat-cell *matCellDef="let element" (contextmenu)="onContextMenu($event, element, i)"> {{element[column]}} </td>
+                </ng-container>
+
+
+                <tr class="trans-row" mat-header-row *matHeaderRowDef="dataTableKey;sticky: true" >
+
+                </tr>
+                <tr style="font-size: smaller;" mat-row class="trans-element-row" *matRowDef="let row; columns: dataTableKey;"
+
+                >
+
+                </tr>
+
+              </table>
+
+              <div style="visibility: hidden; position: fixed"
+              [style.left]="contextMenuPosition.x"
+              [style.top]="contextMenuPosition.y"
+              [matMenuTriggerFor]="contextMenu">
+            </div>
+              <mat-menu #contextMenu="matMenu" #contextMenu2="matMenu">
+                <ng-template matMenuContent let-item="item">
+                  <button style="background: beige;" mat-menu-item (click)="onContextMenuNew(item)">Details in New Tab</button>
+                  <button  style="background: beige;" mat-menu-item (click)="onContextMenuSame(item)">Details in Same Window</button>
+                </ng-template>
+              </mat-menu>
+
+              @if(dataSource.data.length === 0)
+              {
+                <div>No records found for {{f.transType.value}} </div>
+              }
+
+            </div>
+          }
+
+<mat-paginator style="font-size: 10px; background-color: azure;"
+[pageSize]="pageSize"
+[pageSizeOptions]="[10, 25, 50]"
+showFirstLastButtons
+(page)="handlePageEvent($event)"
+  aria-label="Select page"
+  [selectConfig]="{panelClass: 'custom-dropdown-color'}"
+>
+</mat-paginator>
+
+        </div>
+
+
+
+      </as-split-area>
+    </as-split>
+  </div>
+
+  </form>
+
+

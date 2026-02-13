@@ -1,0 +1,156 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Trading Partner Form</title>
+  </head>
+  <body style="padding: 50px;">
+    @if(canRender)
+    {
+    <div>
+@if(isAddMode)
+    {
+<h1 >Add a New Trading Partner</h1>
+    }
+    @else {
+      <h1>Edit Trading Partner - {{id}}</h1>
+    }
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-group" >
+    <div class="form-row">
+
+        <div class="form-group col-9">
+            <label>Trading Partner Name *</label>
+            <input type="text" formControlName="Name" class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.Name.errors }" />
+
+        </div>
+
+
+      </div>
+      <div class="form-row">
+
+       <div class="form-group col-2">
+
+                 <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+         <mat-label style="font-size: medium; ">TP type:</mat-label>
+         <mat-select style="font-size: medium;" formControlName="TPtype" id="TPtype" name="TPtype"
+         [multiple]="false" >
+           @for (tpType of tpTypes; track tpType) {
+           <mat-option  [value]="tpType" style="font-size: 10px; background-color: azure;">
+             {{tpType}}
+           </mat-option>
+          }
+         </mat-select>
+         </mat-form-field>
+
+
+
+       </div>
+       <div class="form-group col-2"></div>
+
+        <div class="form-group col-2">
+
+         <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+           <mat-label style="font-size: medium; ">Communication Protocol:</mat-label>
+           <mat-select style="font-size: medium;" formControlName="CommunicationProtocol"
+            [multiple]="false" >
+            @for(communicationProtocol of protocols; track communicationProtocol) {
+
+                <mat-option [value]="communicationProtocol" style="font-size: 10px; background-color: azure;">
+                {{communicationProtocol}}
+              </mat-option>
+            }
+           </mat-select>
+          </mat-form-field>
+
+
+
+        </div>
+       </div>
+
+       <div class="form-row">
+        <div class="form-group col-9">
+          <label>Folder *</label>
+          <input type="text" formControlName="Folder" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Folder.errors }" />
+
+          <BR>
+
+      </div>
+      </div>
+
+
+
+    <div class="form-row">
+      <div class="form-group col-9">
+        <label>Business Contact</label>
+        <input type="text" formControlName="BusinessContact" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.BusinessContact.errors }" />
+
+        <BR>
+
+    </div>
+    </div>
+
+
+    <div class="form-row">
+      <div class="form-group col-9">
+        <label>Communication Contact</label>
+        <input type="text" formControlName="CommunicationContact" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.CommunicationContact.errors }" />
+
+        <BR>
+
+    </div>
+    </div>
+
+
+    <div class="form-row">
+      <div class="form-group col-9">
+        <label>Notes</label>
+        <input type="text" formControlName="Notes" class="form-control" />
+
+        <BR>
+    </div>
+
+  </div>
+
+  <div class="form-row">
+
+    <div class="form-group col-2">
+      <label>InterchangeId Qualifier</label>
+      <input type="text" formControlName="InterchangeIdQualifier" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.InterchangeIdQualifier.errors }" />
+
+    </div>
+    <div class="form-group col-2"> </div>
+  <div class="form-group col-2">
+    <label>Partner InterchangeId Qualifier</label>
+    <input type="text" formControlName="PartnerInterchangeIdQualifier" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.PartnerInterchangeIdQualifier.errors }" />
+  </div>
+
+</div>
+
+<br>
+<div class="form-row">
+
+       <div class="form-group" style="text-align: center;">
+        <button [disabled]="loading" class="btn btn-primary">
+          @if (loading)
+          {
+            <span class="spinner-border spinner-border-sm mr-1"></span>
+          }
+            Save Trading Partner
+        </button>
+        <a (click)="onCancel()" class="btn btn-link">Cancel</a>
+
+
+    </div>
+</div>
+
+</form>
+</div>
+    }
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
+

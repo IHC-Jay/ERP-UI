@@ -1,0 +1,101 @@
+<html>
+  <head>
+
+    <title>TP Login</title>
+  </head>
+
+  <body style="padding: 1px;">
+  <nav class="navbar navbar-default">
+    <table>
+      <tr style="height: min-content;">
+        <td>
+          <!-- <img [border]="1" width="200" alt="My image name" src="../../assets/ih.png"> -->
+          <div >
+            @if(isLogin) {
+
+            <button class="button button-stable button-clear" style="width: 150pt;" on-click="onHome()"
+               style="border-width: 0ch; border-spacing: 0pc; padding: 0pc;" >
+              <img width="100%" src="assets/ih.png" >
+              </button>
+
+          }
+          @else {
+
+                <img [border]="1" width="80pt" alt="My image name" src="assets/ih.png">
+
+            }
+          </div>
+
+        </td>
+        @if(!isLogin) {
+          <div>ERP Trading Partner Management</div>
+        }
+
+        <ng-container *ngFor="let lnk of links">
+
+        <td>
+          @if(isLogin)
+          {
+            <div >
+            <button style="width: 150pt; height: 35pt;"
+            (click)="routeLnk(lnk.link)" >
+            {{lnk.name}}
+            </button>
+            </div>
+          }
+
+        </td>
+
+        </ng-container>
+        <td>
+          @if(isLogin)
+          {
+           <mat-label  disabled> {{currentUser.username}} &#64; {{currentUser.environment}} </mat-label>
+
+           <div style="align-items:start;">
+              <button style="background-color: red; font-size: small; width: 80pt;  height: 35pt;" (click)="logout()">Logout</button>
+           </div>
+        }
+        </td>
+      </tr>
+    </table>
+  </nav>
+
+  @if(!isLogin)
+  {
+  <div class="col-md-6 offset-md-3 mt-5">
+    <div class="alert alert-info">
+      {{displayHelp}}
+    </div>
+    <div class="card">
+        <h4 class="card-header">Login</h4>
+        <div class="card-body">
+            <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input #username type="text" formControlName="username" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
+                    <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+                        <div *ngIf="f.username.errors.required">Username is required</div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" formControlName="password" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
+                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+                        <div *ngIf="f.password.errors.required">Password is required</div>
+                    </div>
+                </div>
+
+                <button [disabled]="loading" class="btn btn-primary">
+                    <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+                    Login
+                </button>
+                <div *ngIf="error" class="alert alert-danger mt-3 mb-0">{{error}}</div>
+            </form>
+        </div>
+    </div>
+  </div>
+}
+</body>
+</html>
+

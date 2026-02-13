@@ -1,0 +1,59 @@
+@if(canRenderDetails) {
+  <div>
+  <div  class="card" >
+    <div class="card-body">
+        <h5 class="card-title">ID: {{id}}. {{dataSource.data[0]?.MessageType}} / {{dataSource.data[0]?.SendingFacility}} -> {{dataSource.data[0]?.ReceivingFacility}}</h5>
+    </div>
+  </div>
+  @if (prevWindow === 'true') {
+   <button class="btn btn-primary" (click)="toTransactions()">
+    Back to Transactions
+   </button>
+  }
+
+
+  <div style="width: 100%;">
+    <div class="flex-container">
+    @for (item of displayedColumns; track item ; let i = $index)
+    {
+
+            <div div class="mt-2">
+
+            <label class="col-form-label form-label" >{{i+1}}. {{item.label}}: </label>
+
+            <span class="custom-text-truncate">{{getSelectedValue(99, item.key)}}</span>
+            </div>
+
+      }
+      </div>
+
+<table style="vertical-align: top; width: 100%;">
+      <tr>
+      <td style="vertical-align: top; width: 50%; border: 1px solid black;">
+        <div >
+      <label class="col-form-label form-label" style="font-size: 12pt; " >HL7 Data: </label>
+      <span class="custom-text-truncate">{{hl7Data}}</span>
+      </div>
+      </td>
+
+      <td style="vertical-align: top; width: 50%; border: 1px solid black;">
+        <div >
+         <label class="col-form-label form-label" style="font-size: 12pt;" >XML Data: </label>
+         <BR>
+      <span class="custom-text-truncate">{{xmlData}}</span>
+      </div>
+      </td>
+
+     </tr></table>
+
+
+
+  </div>
+
+  </div>
+}
+
+
+
+
+

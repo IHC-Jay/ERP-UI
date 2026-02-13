@@ -1,0 +1,81 @@
+@if(canRenderDetails) {
+  <div>
+  <div  class="card" style="width: 30rem;" >
+    <!-- <img src="..." class="card-img-top" alt="..."> -->
+    <div class="card-body">
+        <h5 class="card-title">{{dataSource.data[0]?.TransactionType}}: {{dataSource.data[0]?.Sender}} -> {{dataSource.data[0]?.Receiver}}</h5>
+        <!-- <p class="card-text" *ngIf="!dataSource.data[0]?.BHTRefId && dataSource.data[0]?.BHTRefId.length > 1">Batch # {{dataSource.data[0]?.BHTRefId}}</p>
+        -->
+    </div>
+  </div>
+
+  <button *ngIf="prevWindow === 'true'" class="btn btn-primary" (click)="toTransactions()">
+    Back to Transactions
+  </button>
+
+    <div class="flex-container">
+      <div class="mt-2" *ngFor="let item of displayedColumns; let itemIndex = index " >
+        <div *ngIf="item.label !== 'erpData'">
+        <label for="erpFields" class="col-form-label form-label" >{{itemIndex+1}}. {{item.label}}</label>
+        <BR>
+          <span class="custom-text-truncate">{{getSelectedValue(itemIndex, item.key)}}</span>
+        </div>
+      </div>
+  </div>
+  @if(ParentId >0) {
+    <div class="center" *ngIf="ERPDataParentId !== '0'">
+      <button  class="btn btn-primary" (click)="openERPModal()" >
+        Display Full ERP</button>
+    </div>
+  }
+
+  <div>
+    <table style="vertical-align: top; width: 100%;">
+      <tr>
+      <td style="vertical-align: top; width: 50%; border: 1px solid black;">
+
+      <div>
+
+      <div *ngFor="let item of displayedColumns; let itemIndex = index ">
+
+        @if (item.label === 'erpData') {
+
+          @if(ParentId >0) {
+          <label class="col-form-label form-label" style="font-size: 12pt;" >ERP Data:</label>
+        } @else {
+          <B>Full ERP:</B>
+        }
+
+
+      }
+      @if (item.label === 'erpData') {
+        <div>
+             <span class="custom-text-truncate">{{getSelectedValue(99, item.key)}}</span>
+        </div>
+      }
+
+      </div>
+      </div>
+
+
+      </td>
+      <td style="vertical-align: top; width: 50%; border: 1px solid black;">
+        <div >
+         <label class="col-form-label form-label" style="font-size: 12pt;" >XML Data: </label>
+         <BR>
+      <span class="custom-text-truncate">{{xmlData}}</span>
+      </div>
+      </td>
+     </tr>
+    </table>
+
+
+
+  </div>
+  </div>
+}
+
+
+
+
+

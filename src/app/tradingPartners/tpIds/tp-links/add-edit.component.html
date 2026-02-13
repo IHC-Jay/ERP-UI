@@ -1,0 +1,237 @@
+<html>
+  <head>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>TP Link Form</title>
+  </head>
+  <body style="padding: 50px;">
+ @if(canRender) {
+
+  <div>
+  <h1 *ngIf="isAddMode">Add TP Link - {{parentTpId}}  ({{tpName}})</h1>
+  <h1 *ngIf="!isAddMode">Edit TP Link - {{id}}</h1>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-group" >
+      <div class="form-row">
+
+          <div class="form-group col-9">
+              <label>TP Link Name</label>
+              <input type="text" formControlName="Link" class="form-control"
+              [readOnly]="!isAddMode"
+              [ngClass]="{ 'is-invalid': submitted && f.Link.errors }" />
+              <div *ngIf="submitted && f.Link.errors" class="invalid-feedback">
+                  <div *ngIf="f.Link.errors.required">Link is required</div>
+              </div>
+          </div>
+
+
+        </div>
+        <div class="form-row">
+
+          <div class="form-group col-9">
+            <label  matTooltip="Select from the dropdown">Transaction Type</label>
+          </div>
+          <div class="form-group col-9">
+            <mat-select id="TransactionType" name="TransactionType" formControlName="TransactionType"
+            class="form-control"
+              disabled="!isAddMode"
+              (selectionChange)="setTransactionType()" [ngClass]="{ 'is-invalid': submitted && f.TransactionType.errors }">
+
+              @for (tt of transactionTypes; track tt) {
+                @if(tt.Type != 'HL7') {
+                    <mat-option [value]="tt.Name" style="font-size: 10px; background-color: azure;">
+                            {{tt.Name}}
+                          </mat-option>
+                        }
+                  }
+
+            </mat-select>
+            <div *ngIf="submitted && f.TransactionType.errors" class="invalid-feedback">
+              <div *ngIf="f.TransactionType.errors.required">TransactionType is required</div>
+          </div>
+          </div>
+
+          <div class="form-group col-7" >
+              <input  matTooltip="Information on the transaction" readonly type="text"
+              formControlName="TransactionTypeInfo" class="form-control" />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group col-4">
+            <label>Direction</label>
+            <mat-select formControlName="Direction" class="form-control" (selectionChange)="setDirection()"
+            [ngClass]="{ 'is-invalid': submitted && f.Direction.errors }">
+
+            @for (dir of direcTypes; track dir) {
+                      <mat-option [value]="dir" style="font-size: 10px; background-color: azure;">
+                            {{dir}}
+                        </mat-option>
+                    }
+            </mat-select>
+            <div *ngIf="submitted && f.Direction.errors" class="invalid-feedback">
+                <div *ngIf="f.Direction.errors.required">Direction is required</div>
+            </div>
+        </div>
+        <div class="form-group col-4">
+          <label>Ack</label>
+          <mat-select formControlName="Ack" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Ack.errors }">
+
+            @for (ack of ackTypes; track ack) {
+                      <mat-option [value]="ack" style="font-size: 10px; background-color: azure;">
+                            {{ack}}
+                        </mat-option>
+                    }
+
+          </mat-select>
+          <div *ngIf="submitted && f.Ack.errors" class="invalid-feedback">
+              <div *ngIf="f.Ack.errors.required">Ack is required</div>
+          </div>
+          </div>
+
+          <div class="form-group col-9">
+            <label>Separators (4 characters): <BR> <I> ElementSeparator,ComponentSeparator,RepetitionSeparator,SegmentTerminator</I> </label>
+            <input type="text" formControlName="Separators" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Link.errors }" />
+
+
+        </div>
+
+      </div>
+
+      <div class="form-row">
+
+        <div class="form-group col-6"  >
+
+          <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+
+            <mat-label style="font-size: medium; " *ngIf="showTpIds; else sendName" >IsaSenderId:</mat-label>
+
+            <ng-template #sendName>
+              <mat-label style="font-size: medium; ">Sender Id:</mat-label>
+            </ng-template>
+
+            <mat-select style="font-size: medium;" formControlName="IsaSenderId"
+            [multiple]="false" >
+              <mat-option *ngFor="let tpId of isaSendingTpIds" [value]="tpId" style="font-size: 10px; background-color: azure;">
+                {{tpId}}
+              </mat-option>
+            </mat-select>
+
+          </mat-form-field>
+
+          <div *ngIf="submitted && f.IsaSenderId.errors" class="invalid-feedback">
+              <div *ngIf="f.IsaSenderId.errors.required">SenderId is required</div>
+          </div>
+      </div>
+        <div class="form-group col-6"  >
+
+        <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+
+            <mat-label style="font-size: medium; " *ngIf="showTpIds; else recvName">IsaReceiverId:</mat-label>
+
+            <ng-template #recvName>
+              <mat-label style="font-size: medium; ">Receiver Id:</mat-label>
+            </ng-template>
+
+          <mat-select style="font-size: medium;" formControlName="IsaReceiverId"
+          [multiple]="false" >
+            <mat-option *ngFor="let tpId of isaReceivingTpIds" [value]="tpId" style="font-size: 10px; background-color: azure;">
+              {{tpId}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+
+
+        <div *ngIf="submitted && f.IsaReceiverId.errors" class="invalid-feedback">
+            <div *ngIf="f.IsaReceiverId.errors.required">ReceiverId is required</div>
+        </div>
+
+        </div>
+
+        <div class="form-group col-6" *ngIf="showTpIds">
+
+          <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+            <mat-label style="font-size: medium; ">GsSenderId:</mat-label>
+            <mat-select style="font-size: medium;" formControlName="GsSenderId"
+            [multiple]="false" >
+              <mat-option *ngFor="let tpId of gsSendingTpIds" [value]="tpId" style="font-size: 10px; background-color: azure;">
+                {{tpId}}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
+        <div *ngIf="submitted && f.GsSenderId.errors" class="invalid-feedback">
+            <div *ngIf="f.GsSenderId.errors.required">Gs ReceiverId is required</div>
+        </div>
+
+        </div>
+
+      <div class="form-group col-6"  *ngIf="showTpIds">
+
+        <mat-form-field appearance="fill" style="font-size: 8px; width: fit-content;" >
+          <mat-label style="font-size: medium; ">GsReceiverId:</mat-label>
+          <mat-select style="font-size: medium;" formControlName="GsReceiverId"
+          [multiple]="false" >
+            <mat-option *ngFor="let tpId of gsReceivingTpIds" [value]="tpId" style="font-size: 10px; background-color: azure;">
+              {{tpId}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <div *ngIf="submitted && f.GsReceiverId.errors" class="invalid-feedback">
+            <div *ngIf="f.GsReceiverId.errors.required">Gs SenderId is required</div>
+        </div>
+    </div>
+
+      </div>
+      <BR>
+
+      <div class="form-row">
+        <div class="form-group col-9">
+          <label>File Name: <I>
+            <BR>Templates:%Partner - TPID; %TransactionType - 810/820 etc.; %DtTm – YYYYMMDD_HHMMSS.sssssssss; %MsgId – MessageId
+          </I></label>
+          <input type="text" formControlName="FileName" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Link.errors }" />
+          <div *ngIf="submitted && f.FileName.errors" class="invalid-feedback">
+              <div *ngIf="f.FileName.errors.required">FileName is required</div>
+          </div>
+
+      </div>
+
+    </div>
+    <BR>
+    <div class="form-row">
+      <div class="form-group col-9">
+        <label>Folder: <BR> <I>
+          Folder to be used for this transaction. If blank, the folder defined for the Trading Partner will be used.
+        </I></label>
+        <input type="text" formControlName="Folder" class="form-control" [ngClass]="{ 'is-invalid': submitted && f.Link.errors }" />
+
+
+    </div>
+
+  </div>
+
+  <BR>
+  <div class="form-row">
+
+        <div class="form-group" style="text-align: center;">
+          <button [disabled]="loading" class="btn btn-primary">
+              <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
+              Save TP Link
+          </button>
+          <a (click)="onCancel()" class="btn btn-link">Cancel</a>
+
+
+      </div>
+  </div>
+
+  </form>
+  </div>
+}
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
+</body>
+</html>
+
