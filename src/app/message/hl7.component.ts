@@ -79,6 +79,7 @@ export class HL7Component implements OnInit, AfterViewInit {
 
   sub:any;
   isTableExpanded = false;
+  private queryTriggeredInitSearch = false;
 
   selDropdownList = [];
 
@@ -173,6 +174,7 @@ export class HL7Component implements OnInit, AfterViewInit {
       if (this.currentMessageType !== "")
       {
         queryParams = 1
+        this.queryTriggeredInitSearch = true;
         this.searchString = params['search'] || '';
         if(this.searchString==="-")
         {
@@ -231,8 +233,9 @@ export class HL7Component implements OnInit, AfterViewInit {
         }
         console.info("Message Types #: " + this.MessageTypes.length);
 
-
-        this.onSearchTransactions();
+        if (this.queryTriggeredInitSearch) {
+          this.onSearchTransactions();
+        }
       });
 
 

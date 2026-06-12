@@ -250,6 +250,47 @@ fetchDisplayColumns() {
 
 }
 
+fetchSearchColumns() {
+
+  if(this.currentUser === '')
+    {
+      this.getCurrentUser()
+    }
+
+  let url = this.rtTransUrl + 'SearchColumns?userNm=' +  this.currentUser;
+
+  console.log('Fetch SearchColumns from  ' + url);
+  return this.http2
+    .get<{ [key: string]: any }>(
+      url
+    )
+
+    .pipe(
+      map(responseData => {
+        console.info(responseData);
+
+        const srchArray: any[] = [];
+        for (const key in responseData) {
+          if (responseData.hasOwnProperty(key)) {
+            srchArray.push({ ...responseData[key], id: responseData[key].id });
+          }
+        }
+        if (srchArray.length > 0) {
+          return srchArray;
+        }
+        return Array.isArray(responseData) ? responseData : [];
+
+      }),
+
+      catchError(errorRes => {
+        // Send to analytics server
+        console.error('In fetchSearchColumns catchError: ' + errorRes);
+        return errorRes;
+      })
+    );
+
+}
+
 saveDisplayColumns(dispCol: DisplayColumnsArray)
 {
   dispCol.User =  this.currentUser;

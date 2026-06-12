@@ -88,6 +88,7 @@ export class TransactionComponent implements OnInit, AfterViewInit {
 
 
   searchColumns= this.transactionsSearchColumns.slice();
+  searchColumnsOrder: { [key: string]: number } = {};
 
   @ViewChild("searchValue") searchValue: ElementRef;
   @ViewChild("searchField") searchField: ElementRef;
@@ -104,6 +105,7 @@ export class TransactionComponent implements OnInit, AfterViewInit {
   tradingPartnerString:string = "";
   sub:any;
   isTableExpanded = false;
+    private queryTriggeredInitSearch = false;
 
   selDropdownList = [];
 
@@ -182,6 +184,7 @@ export class TransactionComponent implements OnInit, AfterViewInit {
       if (this.currentTransType !== "")
       {
         queryParams = 1
+          this.queryTriggeredInitSearch = true;
         this.searchString = params['search'] || '';
         if(this.searchString==="-")
         {
@@ -251,43 +254,60 @@ export class TransactionComponent implements OnInit, AfterViewInit {
 
       this.form.controls.rowCnt.setValue(this.maxCount[1]);
 
-
-      this.TransactionService.fetchDisplayColumns().subscribe((res: any) => {
-        this.usrDisplayColumns.splice(0, this.usrDisplayColumns.length)
-        this.usrDisplayColumns.push(...res);
-
-
-        if (this.currentTransType !== '')
+      this.TransactionService.fetchSearchColumns().subscribe((srchRes: any) => {
+        this.searchColumnsOrder = {};
+        for (var item of srchRes)
+        {
+          const key = (item.Key ?? item.key ?? '').toString().trim();
+          if (key !== '')
           {
-            // this.searchTypeChange(null);
-            this.form.controls.transType.setValue(this.currentTransType);
-            // this.form.controls.searchValue.setValue(this.searchString);
-            this.form.controls.matStartDate.setValue(this.startDate)
+            const ord = Number(item.Order ?? item.order);
+            this.searchColumnsOrder[key.toLowerCase()] = Number.isNaN(ord) ? Number.MAX_SAFE_INTEGER : ord;
+          }
+        }
+        console.info('fetchSearchColumns # of columns: ' + Object.keys(this.searchColumnsOrder).length);
 
-            // this.startDate = this.searchString;
+        this.TransactionService.fetchDisplayColumns().subscribe((res: any) => {
+          this.usrDisplayColumns.splice(0, this.usrDisplayColumns.length)
+          this.usrDisplayColumns.push(...res);
+          console.info('fetchDisplayColumns # of columns: ' + this.usrDisplayColumns.length);
 
-            this.form.controls.rowCnt.setValue("25");
-
-            if (this.searchString !== '')
+          if (this.currentTransType !== '')
             {
-              this.searchTransaction = true;
+              // this.searchTypeChange(null);
+              this.form.controls.transType.setValue(this.currentTransType);
+              // this.form.controls.searchValue.setValue(this.searchString);
+              this.form.controls.matStartDate.setValue(this.startDate)
+
+              // this.startDate = this.searchString;
+
+              this.form.controls.rowCnt.setValue("25");
+
+              if (this.searchString !== '')
+              {
+                this.searchTransaction = true;
+              }
+              console.log('set search controls, ' + this.searchTransaction);
+
+              console.info("User display columns: " + this.usrDisplayColumns.length);
+              this.transactionChange(this.currentTransType);
+
+              console.info('Transaction search for: ' + this.currentTransType);
+              if (this.queryTriggeredInitSearch) {
+                this.onSearchTransactions();
+              }
+              // this.form.controls.searchValue.setValue("");
+              if (this.searchColumns.length > 0) {
+                this.form.controls.searchField.setValue(this.searchColumns[0].label);
+              }
+              this.form.controls.searchCndition.setValue(this.conditionColumns[0]);
+
             }
-            console.log('set search controls, ' + this.searchTransaction);
+            else{
+              this.clearSearch();
+            }
 
-            console.info("User display columns: " + this.usrDisplayColumns.length);
-            this.transactionChange(this.currentTransType);
-
-            console.info('Transaction search for: ' + this.currentTransType);
-            this.onSearchTransactions();
-            // this.form.controls.searchValue.setValue("");
-            this.form.controls.searchField.setValue(this.transactionsSearchColumns[0].label);
-            this.form.controls.searchCndition.setValue(this.conditionColumns[0]);
-
-          }
-          else{
-            this.clearSearch();
-          }
-
+        });
       });
 
       this.tpDataSource.push('All');
@@ -665,11 +685,32 @@ transactionChange(evt: any)
   }
 
 
+  this.searchColumns = this.sortSearchColumns(this.searchColumns);
+
   console.info("allDropdownList #: " + this.allDropdownList.length);
   console.info("selDropdownList #: " + this.selDropdownList.length);
   console.info("searchColumns #: " + this.searchColumns.length);
 
   this.butSaveDisplay = false;
+}
+
+sortSearchColumns(columns: any[])
+{
+  const hasOrder = Object.keys(this.searchColumnsOrder).length > 0;
+  const filtered = hasOrder
+    ? columns.filter(c => this.searchColumnsOrder[(c.key || '').toString().toLowerCase()] !== undefined)
+    : columns;
+
+  return filtered.sort((a: any, b: any) => {
+    const aOrder = this.searchColumnsOrder[(a.key || '').toString().toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    const bOrder = this.searchColumnsOrder[(b.key || '').toString().toLowerCase()] ?? Number.MAX_SAFE_INTEGER;
+    if (aOrder !== bOrder) {
+      return aOrder - bOrder;
+    }
+    const aLabel = (a.label || '').toString();
+    const bLabel = (b.label || '').toString();
+    return aLabel.localeCompare(bLabel);
+  });
 }
 
 setSearchField()
